@@ -1,0 +1,45 @@
+{% extends 'index.njk' %}
+    {% block body %}
+    <!-- action="/authen/change/{{session.uid}}" method="POST" -->
+    <form  id="form">
+        <div class="form-group">
+          <label for="til">Old password:</label>
+          <input  id="til" type="password" class="form-control" name="opwd" placeholder="Old password">
+        </div>
+        <div class="form-group">
+          <label for="old">New password:</label>
+          <input id="old" type="password" name="npwd" class="form-control" placeholder="New password">
+        </div>
+        <div class="form-group">
+          <label for="new">Re-enter new password:</label>
+          <input id="new" type="password" name="rnpwd" class="form-control" placeholder="Re-enter new password">
+        </div>
+        <div class="form-group form-check">
+          <input type="text" value="{{session.uid}}" hidden name="uid">
+        </div>
+        <button type="submit" id="formbtn" class="btn btn-primary">Change my password</button><span id="form_error">HSHSH</span>
+      </form>
+      <script type="text/javascript">
+        $("#form").submit(function(ev){
+          ev.preventDefault();
+          var opwd = form.opwd.value;
+          var npwd = form.npwd.value;
+          var rnpwd = form.rnpwd.value;
+          var uid = form.uid.value;
+          $.post('/authen/change/{{session.uid}}', `opwd=${opwd}&npwd=${npwd}&rnpwd=${rnpwd}&uid=${uid}`, function(response){
+            if(response =="Ok"){
+              window.location.replace('/');
+            } else {
+              form.reset();
+              if (response == "Old pass invalid"){
+                $("#form_error").text('Your current password is incorrect');
+              } else if (response == "Not authorized") {
+                window.location.replace('/');
+              } else {
+                $("#form_error").text('New passwords are not match');
+              }
+            }
+          })  
+        })
+      </script>
+    {% endblock %}

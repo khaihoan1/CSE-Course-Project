@@ -1,0 +1,80 @@
+{% extends "index.njk" %}
+    {% block body %}
+        {% for article in articles %}
+        <div class="article-container">
+            <div class="header">
+                <div class="avatar-container" style="display: inline-block;">
+                    <span class="navbar-brand">
+                        <img src="static/avatar/5f8fe8f6b22f7e4130fc1299.jpg" style="width:40px;">
+                    </span>
+                </div>
+                <div class="inside-right">
+                    <div class="top-">
+                        <span style="font-size: 0.6rem;">by </span><a href="/user/{{article.uid}}">{{article.username}}</a><span style="font-size: 0.6rem;"> in </span><a href="/category/{{article.category}}">{{article.cate}}</a>
+                    </div>
+                    <div class="bot-">
+                        <span style="font-size: 0.5rem;">at</span> {{article.time}}
+                    </div>
+                </div>        
+            </div>
+            <div class="content">
+                <a href="/article/detail/{{article._id}}">
+                    <h3>{{article.title}}</h3>
+                    <p>{{article.text_demo|safe}}</p>
+                </a>
+            </div> 
+        </div>
+        {% endfor %}
+        <!-- <div>    
+            <span id="skipNumber" skipNumber="0"></span>
+            <button class="btn btn-primary" id="btn">Load more</button>
+        </div> -->
+    {% endblock %}
+    <!-- ------------- -->
+    <!-- {% block hihi %}
+    <div>    
+        <span id="skipNumber" skipNumber="0"></span>
+        <button class="btn btn-primary" id="btn">Load more</button>
+    </div>
+    {% endblock %} -->
+    <!-- ------------------ -->
+    {% block script %}
+    <script>
+        // btn.onclick = function () {
+        //     var n = 1 + parseInt(skipNumber.getAttribute('skipNumber'));
+        //     console.log(n);
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open('GET', `/{{route}}/${n}`);
+            
+        //     xhr.send();
+        //     // xhr.send();
+        //     xhr.onload = () => {
+        //         // console.log(`RESPONSE: ${xhr.response}`);
+        //         if (xhr.response == "No more articles"){
+
+        //             to_put.insertAdjacentHTML("beforeEnd", `<p class=".text-danger">No more articles</p>`);
+        //         } else {
+        //             skipNumber.setAttribute('skipNumber', n);
+        //             to_put.insertAdjacentHTML("beforeEnd", xhr.response);
+        //         }
+        //     }
+        console.log(window.pageYOffset);
+        window.onscroll = function(ev) {
+            console.log(window.innerHeight);
+            console.log(window.pageYOffset);
+            console.log(document.body.offsetHeight + 17);
+            console.log(document.body.style.padding);
+            if (Math.ceil(window.innerHeight + window.pageYOffset) >= document.body.offsetHeight + 17){
+                alert("you're at the bottom of the page");
+            }
+        }
+        body.onscroll = function (evt) {
+            console.log(page.scrollTop);
+            console.log(window.scrollHeight);
+            if (page.scrollTop + window.innerHeight >= page.scrollHeight){
+                
+                console.log('reached bottom!');
+            }
+        }
+    </script>
+    {% endblock%}

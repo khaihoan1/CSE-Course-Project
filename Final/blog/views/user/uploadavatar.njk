@@ -1,0 +1,12 @@
+{% extends "index.njk" %}
+{% block body %}
+<!-- enctype="multipart/form-data -->
+    <h1>{{uploadavatar_inform}}</h1>
+    <form method="POST" action="/user/avatar" enctype="multipart/form-data">
+        <div class="form-group">
+            <input  id="avatar" type="file" class="form-control input-group input-file" required name="avatarfile">
+        </div>
+        <input type="text" name="uid" value="{{session.uid}}" class="form-control" hidden>
+        <button type="submit" id="formbtn" class="btn btn-primary">Upload my avatar</button>
+    </form>  
+{% endblock %}

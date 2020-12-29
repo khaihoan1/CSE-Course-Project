@@ -1,0 +1,61 @@
+{% extends "index.njk" %}
+    {% block body %}
+        {% for article in articles %}
+        <div class="row" style="height:auto">
+        <div class="article-container">
+            <div class="header">
+                <div class="avatar-container" style="display: inline-block;">
+                    <span class="navbar-brand">
+                        <img src="/avatar/{{article.img}}.jpg" style="width:40px;">
+                    </span>
+                </div>
+                <div class="inside-right">
+                    <div class="top-">
+                        <span style="font-size: 0.6rem;">by </span><a href="/user/{{article.uid}}">{{article.username}}</a><span style="font-size: 0.6rem;"> in </span><a href="/category/{{article.category}}">{{article.cate}}</a>
+                    </div>
+                    <div class="bot-">
+                        <span style="font-size: 0.5rem;">at</span> {{article.time}}
+                    </div>
+                </div>        
+            </div>
+            <div class="content">
+                <a href="/article/detail/{{article._id}}">
+                    <h3>{{article.title}}</h3>
+                    <!-- <p style="max-height: 200px;">{{article.text_demo|safe}}</p> -->
+                </a>
+            </div> 
+        </div>
+        </div>
+        ----------------------------------
+        {% endfor %}
+        <div>    
+            <span id="ajaxInfo" skipNumber="0" url="{{urlForAjax}}"></span>
+        </div>
+    {% endblock %}
+
+    {% block script %}
+    <script>
+        window.onscroll = function(ev) {
+            console.log(window.innerHeight);
+            console.log(window.pageYOffset);
+            console.log(document.body.offsetHeight + 17);
+            if (Math.ceil(window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 17){
+                var n = 1 + parseInt(ajaxInfo.getAttribute('skipNumber'));
+                var route = ajaxInfo.getAttribute('url');
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', `${route}+${n}`);
+                xhr.send();
+                xhr.onload = () => {
+                    if (xhr.response == "No more articles"){
+                        to_put.insertAdjacentHTML("beforeEnd", `<p class=".text-danger">No more articles</p>`);
+                    } else {
+                        ajaxInfo.setAttribute('skipNumber', n);
+                        to_put.insertAdjacentHTML("beforeEnd", xhr.response);
+                    }
+                }
+            }
+        }    
+    </script>
+    {% endblock%}
+
+

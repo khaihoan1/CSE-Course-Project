@@ -1,0 +1,199 @@
+{% extends "layouts/layout.njk" %}
+
+    {% block navauthen %}
+        {% if session %}
+            <!-- Authen Links -->
+        <ul class="navbar-nav float-right" style='float: right'>
+            <li class="nav-item">
+                <!-- Brand/logo -->
+                <a class="navbar-brand" href="#">
+                    <img src="/avatar/{{urlForUser}}.jpg" alt="avatar" style="width:40px;">
+                </a>
+            </li>
+            <li class="nav-item">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary">{{session.username}}</button>
+                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown">
+                    </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="/user/articles/{{session.uid}}">My articles</a>
+                    <a class="dropdown-item" href="/authen/change/{{session.uid}}">Change my password</a>
+                    <a class="dropdown-item" href="/user/avatar">Update avatar</a>
+                </div>
+            </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/authen/signout">Sign out</a>
+            </li>
+        </ul>
+        {% else %}
+            <!-- Authen Links -->
+        <div style='float: right'>
+            <ul class="navbar-nav" style='float: right'>
+                <li class="nav-item">
+                    <a class="nav-link" href="" data-toggle="modal" data-target="#login">Login </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="" data-toggle="modal" data-target="#signup">Sign up</a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Authentication Modals -->
+        <div class='modal' id='login'> 
+            <div class='modal-dialog'>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title">Sign in</div>
+                        <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class='modal-body'>
+                        <form id="login_form">
+                            <div class="form-group">
+                                <p id='login_error'></p>
+                                <label for="usr">Username:</label>
+                                <input  id="usr" type="text" class="form-control" name="usr" placeholder="Username">
+                            </div>
+                            <div class="form-group">
+                                <label for="pwd">Password:</label>
+                                <input id="pwd" type="password" name="pwd" class="form-control" placeholder="Password">
+                            </div>
+                            <div class="form-group">
+                                <label for="rmb">Remember me:</label>
+                                <input id="rmb" type="checkbox" name="rmb" class="form-control" value="1">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='modal' id='signup'>
+            <div class='modal-dialog'>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title">Sign up</div>
+                        <button class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class='modal-body'>
+                        <form id="signup_form">
+                            <div class="form-group">
+                                <p id='signup_error'></p>
+                                <label for="su_usr">Username:</label>
+                                <input  id="su_usr" type="text" class="form-control" name="usr" placeholder="Old password">
+                            </div>
+                            <div class="form-group">
+                                <label for="su_pwd">Password:</label>
+                                <input id="su_pwd" type="password" name="pwd" class="form-control" placeholder="New password">
+                            </div>
+                            <div class="form-group">
+                                <label for="rpwd">Confirm password:</label>
+                                <input id="rpwd" type="password" name="rpwd" class="form-control" placeholder="Confirm password">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Sign up</button>
+                        </form>    
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- AJAX FOR SIGN UP -->
+        <script type='text/javascript'>
+            signup_form.onsubmit = (ev) => {
+                ev.preventDefault();
+                var usr = signup_form.usr.value;
+                var pwd = signup_form.pwd.value;
+                var rpwd = signup_form.rpwd.value;
+                // if (!usr || ! pwd)
+                console.log(usr);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/authen/signup');
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                // var fd = new FormData();
+                // fd.append('usr', usr);
+                // console.log(fd.usr);
+                // console.log(fd);
+                // fd.append('pwd', pwd);
+                // console.log(fd);
+                xhr.send(`usr=${usr}&pwd=${pwd}&rpwd=${rpwd}`);
+                // xhr.send(fd);
+                xhr.onload = () => {
+                    var x = xhr.response;
+                    if (x == "1"){
+                        window.location.reload();
+                    } else {
+                        signup_form.reset();
+                        if (x == '0'){
+                            $('#signup_error').text('Username already used');
+                            $('#signup_error').addClass('text-danger font-weight-bold');
+                        } else if (x == "2"){
+                            $('#signup_error').text('Passwords dont match');
+                            $('#signup_error').addClass('text-warning font-italic');
+                        }
+                    }            
+                }
+            }
+        </script>
+        <!-- AJAX FOR LOGIN -->
+        <script type="text/javascript">
+            login_form.onsubmit = function (ev){
+                ev.preventDefault();
+                var usr = this.usr.value;
+                var pwd = this.pwd.value;
+                var rmb = this.rmb.value;
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', "/authen/login");
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.send(`usr=${usr}&pwd=${pwd}&rmb=${rmb}`);
+                xhr.onload = () => {
+                    var x = xhr.response;
+                    if(x == "OK"){
+                        window.location.reload();
+                    } else {
+                        login_form.reset();
+                        $('#login_error').text('Wrong username or password');
+                        $('#login_error').addClass('text-danger font-weight-bold');
+                    }
+                }
+            }
+        </script>
+        {% endif %}
+    {% endblock %}
+
+    {% block body %}
+        <div style="margin: 20px; ">
+            <a href="/category/1" style="width: 100%">
+                <div class="image" style="background: url('/images/bg-categories/science.jpg');">
+                    Science & Technology
+                </div>
+            </a>
+        </div>
+        <div style="margin: 20px;">
+            <a href="/category/3" style="width: 100%">
+                <div class="image" style="background: url('/images/bg-categories/sport.jpg');">
+                    Sports  
+                </div>
+            </a>
+        </div>
+        <div style="margin: 20px;">
+            <a href="/category/4" style="width: 100%">
+                <div class="image" style="background: url('/images/bg-categories/game.png');">
+                    Games
+                </div>
+            </a>
+        </div>
+        <div style="margin: 20px;">
+            <a href="/category/2" style="width: 100%">
+                <div class="image" style="background: url('/images/bg-categories/debate.jpg');">
+                    Debate   
+                </div>
+            </a>
+        </div>
+        <div style="margin: 20px;">
+            <a href="/category/5" style="width: 100%">
+                <div class="image" style="background: url('/images/bg-categories/other-topics.jpg');"> 
+                    
+                </div>
+            </a>
+        </div>
+        
+    {% endblock %}

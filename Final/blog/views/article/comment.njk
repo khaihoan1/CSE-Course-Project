@@ -1,0 +1,16 @@
+<div class="header row-2">
+    <div class="avatar-container" style="display: inline-block;">
+        <span class="navbar-brand">
+            <img src="/avatar/{{comment.imageUrl}}.jpg" style="width:40px;">
+        </span>
+    </div>
+    <div class="inside-right">
+        <div class="top-">
+            <span style="font-size: 0.6rem;">by </span><a href="/user/{{comment.uid}}">{{comment.user}}</a>
+            <span style="font-size: 0.5rem;">at</span> {{comment.time}}
+        </div>
+    </div>        
+</div>
+    <div class="content">
+        <p>{{comment.comment}}</p>
+    </div>                                  

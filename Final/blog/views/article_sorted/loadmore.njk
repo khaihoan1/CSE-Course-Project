@@ -1,0 +1,25 @@
+{% for article in articles %}
+            <div class="row" style="height:auto">
+            <div class="article-container">
+                <div class="header row-2">
+                    <div class="avatar-container" style="display: inline-block;">
+                        <span class="navbar-brand">
+                            <img src="/avatar/{{article.img}}.jpg" style="width:40px;">
+                        </span>
+                    </div>
+                    <div class="inside-right">
+                        <div class="top-">
+                            <span style="font-size: 0.6rem;">by </span><a href="/user/{{article.uid}}">{{article.username}}</a><span style="font-size: 0.6rem;"> in </span><a href="/category/{{article.category}}">{{article.cate}}</a>
+                        </div>
+                        <div class="bot-">
+                            <span style="font-size: 0.5rem;">at</span> {{article.time}}
+                        </div>
+                    </div>        
+                </div>
+                <div class="content">
+                    <h3>{{article.title}}</h3>
+                <p>{{article.text_demo|safe}}</p>
+                </div>  
+            </div>
+        </div>
+        {% endfor %}

@@ -1,0 +1,98 @@
+{% extends 'index.njk' %}
+    {% block body %}
+    <div class="article-container">
+        <div class="content">
+                <h3>{{article.title}}</h3>
+                <p>{{article.content|safe}}</p>
+        </div> 
+        <div class="header row-2">
+            <div class="avatar-container" style="display: inline-block;">
+                <span class="navbar-brand">
+                    <img src="/avatar/{{article.img}}.jpg" style="width:40px;">
+                </span>
+            </div>
+            <div class="inside-right">
+                <div class="top-">
+                    <span style="font-size: 0.6rem;">by </span><a href="/user/{{article.uid}}">{{article.username}}</a><span style="font-size: 0.6rem;"> in </span><a href="/category/{{article.category}}">{{article.cate}}</a>
+                </div>
+                <div class="bot-">
+                    <span style="font-size: 0.5rem;">at</span> {{article.time}}
+                </div>
+            </div>        
+        </div> 
+    </div>
+    <h3>Comments</h3>
+    ------------------------------------------
+    <div class="article-container">
+        <div class="article-container">
+            <div id="comment_container">
+                <!-- Comments go here -->
+                {% for comment in comments %}
+                <div class="header row-2">
+                    <div class="avatar-container" style="display: inline-block;">
+                        <span class="navbar-brand">
+                            <img src="/avatar/{{comment.img}}.jpg" style="width:40px;">
+                        </span>
+                    </div>
+                    <div class="inside-right">
+                        <div class="top-">
+                            <span style="font-size: 0.5rem;">by </span><a href="/user/{{comment.uid}}">{{comment.user}}</a>
+                            <span style="font-size: 0.5rem;">at</span> {{comment.time}}
+                        </div>
+                    </div>        
+                </div>
+                <div class="content">
+                <p>{{comment.comment}}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div style="margin-bottom: 30px;">
+        {% if session %}
+            <form id="comment_form" method="POST" action="">
+                <span>
+                    <i class="fas fa-comment"></i>
+                    <input type="text" hidden value={{session.uid}} name="cmtOwner">
+                    <input type="text" hidden value={{article._id}} name="articleId">
+                    <input type=text name="comment">
+                    <button>Send</button> 
+                </span>
+            </form> 
+        {% else %}
+            <p>Please <span id="logincmt" style="color: blue;">login</span> to comment</p>
+            <script>
+                logincmt.onclick = () => {
+                    $('#login').modal();
+                }
+            </script>
+        {% endif %}
+        </div>
+    {% endblock %}
+
+    {% block script%}
+        {% if session %}
+            <script>
+                comment_form.onsubmit = function (ev){
+                    ev.preventDefault();
+                    if (!this.comment.value){
+                        return;
+                    }
+                    var cmt = this.comment.value;
+                    var uid = this.cmtOwner.value;
+                    var articleId = this.articleId.value;
+                    var xhr = new XMLHttpRequest;
+                    console.log(cmt);
+                    xhr.open('POST', '/comment/add');
+                    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhr.send(`comment=${cmt}&uid=${uid}&articleId=${articleId}`);
+                    xhr.onload = function (){
+                        comment_form.reset();
+                        comment_container.insertAdjacentHTML('beforeEnd', xhr.response);
+                    }
+                }
+            </script>
+        {% endif %}
+    {% endblock %}
+
+
